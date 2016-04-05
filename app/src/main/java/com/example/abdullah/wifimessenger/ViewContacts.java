@@ -1,5 +1,8 @@
 package com.example.abdullah.wifimessenger;
 
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.provider.ContactsContract;
 import android.support.v7.app.AppCompatActivity;
@@ -18,22 +21,28 @@ public class ViewContacts extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
-        Cursor phones = getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null,null,null, null);
-        while (phones.moveToNext())
-        {
-            String name=phones.getString(phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
-            String phoneNumber = phones.getString(phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
-            C.add(new Contact(name,phoneNumber,R.drawable.image));
-        }
-        phones.close();
-
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_contacts);
-        listView =(ListView) this.findViewById(R.id.listView);
-        listView.setAdapter(new adapterContact(this, C));
+        SharedPreferences sp = this.getSharedPreferences("registration_info", Context.MODE_PRIVATE);
 
+        if(sp.getString("user_email",null) == null)
+        {
+            Intent regIntent = new Intent(ViewContacts.this, Registration.class);
+            ViewContacts.this.startActivity(regIntent);
+        }
+        else
+        {
+            Cursor phones = getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, null, null, null);
+            while (phones.moveToNext()) {
+                String name = phones.getString(phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
+                String phoneNumber = phones.getString(phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+                C.add(new Contact(name, phoneNumber, R.drawable.image));
+            }
+            phones.close();
+
+            listView = (ListView) this.findViewById(R.id.listView);
+            listView.setAdapter(new adapterContact(this, C));
+        }
     }
     /*
     @Override

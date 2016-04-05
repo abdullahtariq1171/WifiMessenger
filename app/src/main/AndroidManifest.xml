@@ -23,6 +23,10 @@
             android:name=".Editprofile"
             android:label="@string/title_activity_editprofile" >
         </activity>
+        <activity
+            android:name=".Registration"
+            android:label="@string/title_activity_registration" >
+        </activity>
     </application>
 
 </manifest>
